@@ -1,2 +1,2 @@
 from .hknet import HKNet, HKLut, HKNetMask, MaskBlock
-from .mod import MOD
+from .conv_sep_kan import ConvSepKan
