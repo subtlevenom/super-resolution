@@ -64,6 +64,7 @@ def train(args: argparse.Namespace) -> None:
             ModelCheckpoint(
                 filename="{epoch}-{val_de:.2f}",
                 monitor='val_de',
+                save_top_k=5,
                 save_last=True,
             ),
             RichModelSummary(),

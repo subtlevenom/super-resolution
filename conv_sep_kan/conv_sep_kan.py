@@ -36,5 +36,7 @@ class ConvSepKan(torch.nn.Module):
         for layer in self.layers:
             y = layer(y)
         y = self.shuffle(y)
+
         x = torch.concat([y, cb, cr], dim=1)
+
         return x
