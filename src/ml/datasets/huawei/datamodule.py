@@ -124,7 +124,6 @@ class HuaweiDataModule(L.LightningDataModule):
         ])
         self.image_test_transform = Compose([
             ToImage(),
-            CenterCrop(1024),
             ToDtype(dtype=torch.float32, scale=True),
             RgbToYcbcr(),
         ])
@@ -145,7 +144,7 @@ class HuaweiDataModule(L.LightningDataModule):
             )
         if stage == 'test' or stage is None:
             self.test_dataset = Image2ImageDataset(
-                self.test_paths_a, self.test_paths_b, self.image_test_transform, self.test_image_p_transform,
+                self.test_paths_a, self.test_paths_b, self.image_test_transform,
             )
         if stage == 'predict' or stage is None:
             self.predict_dataset = Image2ImageDataset(

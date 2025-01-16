@@ -2,8 +2,8 @@ import torch
 from torch import nn
 import lightning as L
 from torch import optim
-from ..models import HKNet
 from src.core import Logger
+from ..models import ConvSepKan
 from ..metrics import (
     PSNR,
     SSIM,
@@ -14,7 +14,7 @@ from ..losses import GANFeatLoss
 
 class DefaultPipeline(L.LightningModule):
     def __init__(self,
-        model: HKNet,
+        model: ConvSepKan,
         optimiser: str = 'adam',
         lr: float = 1e-3,
         weight_decay: float = 0,
@@ -108,7 +108,7 @@ class DefaultPipeline(L.LightningModule):
         ssim_loss = self.ssim_loss(predictions, targets)
         loss = mae_loss + (1 - ssim_loss) * 0.15
 
-        psnr_metric = self.psnr_metric(predictions, targets)
+        psnr_metric = self.psnr_metric(predictions[:,:1], targets[:,:1])
         ssim_metric = self.ssim_metric(predictions, targets)
         de_metric = self.de_metric(predictions, targets)
 
