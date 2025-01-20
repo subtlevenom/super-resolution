@@ -30,6 +30,7 @@ class ConvSepKan(torch.nn.Module):
         y = x[:,:1,:,:]
         cb = x[:,1:2,:,:]
         cr = x[:,2:,:,:]
+
         cb = F.interpolate(cb, scale_factor=self.upscale, mode='bilinear')
         cr = F.interpolate(cr, scale_factor=self.upscale, mode='bilinear')
 

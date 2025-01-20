@@ -76,7 +76,7 @@ class DefaultPipeline(L.LightningModule):
         inputs, targets = batch
         predictions = self(inputs)
 
-        mae_loss = self.mae_loss(predictions, targets)
+        mae_loss = self.mae_loss(predictions[:,:1], targets[:,:1])
         ssim_loss = self.ssim_loss(predictions, targets)
         loss = mae_loss + (1 - ssim_loss) * 0.15
 
@@ -91,7 +91,7 @@ class DefaultPipeline(L.LightningModule):
         ssim_loss = self.ssim_loss(predictions, targets)
         loss = mae_loss + (1 - ssim_loss) * 0.15
 
-        psnr_metric = self.psnr_metric(predictions, targets)
+        psnr_metric = self.psnr_metric(predictions[:,:1], targets[:,:1])
         ssim_metric = self.ssim_metric(predictions, targets)
         de_metric = self.de_metric(predictions, targets)
 
