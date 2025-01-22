@@ -27,7 +27,6 @@ class ConvSepKan(torch.nn.Module):
             self.layers.append(layer)
 
     def forward(self, x:torch.Tensor):
-        y = x[:,:1,:,:]
         cb = x[:,1:2,:,:]
         cr = x[:,2:,:,:]
 
@@ -35,7 +34,7 @@ class ConvSepKan(torch.nn.Module):
         cr = F.interpolate(cr, scale_factor=self.upscale, mode='bilinear')
 
         for layer in self.layers:
-            y = layer(y)
+            y = layer(x[:,:1])
         y = self.shuffle(y)
 
         x = torch.concat([y, cb, cr], dim=1)

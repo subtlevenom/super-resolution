@@ -128,12 +128,14 @@ class SelfAttention(nn.Module):
         # output projection
         self.project_out = nn.Conv2d(dim, dim, kernel_size=1, bias=bias)
 
-    def forward(self, x):
+    def forward(self, x, w=None):
         b, c, h, w = x.shape
 
         q = self.q_proj(x)
         k = self.k_proj(x)
         v = self.v_proj(x)
+        if w is not None:
+            v = v * w
         a = self.a_proj(x)
 
         q = rearrange(q,
@@ -204,6 +206,38 @@ class LayerNorm(nn.Module):
         x = rearrange(x, 'b c h w -> b (h w) c')
         x = self.body(x)
         x = rearrange(x, 'b (h w) c -> b c h w', h=h, w=w)
+        return x
+
+
+class FFN(nn.Module):
+    """
+    Feed-forward Network with Depth-wise Convolution
+    """
+
+    def __init__(self, in_features, out_features=None, hidden_features=None):
+        super().__init__()
+        out_features = out_features or in_features
+        hidden_features = hidden_features or in_features
+        self.pointwise1 = nn.Conv2d(in_features,
+                                    hidden_features,
+                                    kernel_size=1)
+        self.depthwise = nn.Conv2d(hidden_features,
+                                   hidden_features,
+                                   kernel_size=3,
+                                   stride=1,
+                                   padding=1,
+                                   dilation=1,
+                                   groups=hidden_features)
+        self.pointwise2 = nn.Conv2d(hidden_features,
+                                    out_features,
+                                    kernel_size=1)
+        self.act_layer = nn.ReLU(inplace=True)
+
+    def forward(self, x):
+        x = self.pointwise1(x)
+        x = self.depthwise(x)
+        x = self.act_layer(x)
+        x = self.pointwise2(x)
         return x
 
 

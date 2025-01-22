@@ -5,7 +5,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from .unet import UNet
-from .unet_blocks import LayerNorm, GatedFFN
+from .unet_blocks import LayerNorm, GatedFFN, FFN
+from .gazetr import GazeTR
 
 
 class ConvSepKanEncoder(nn.Module):
@@ -13,12 +14,9 @@ class ConvSepKanEncoder(nn.Module):
     def __init__(self, in_channels, out_channels):
         super().__init__()
 
-        self.encoder = UNet(in_channels, out_channels)
-        self.ffn = GatedFFN(out_channels, out_channels, kernel_size=3, act_layer=nn.GELU())
+        self.encoder = GazeTR(in_channels=in_channels, out_channels=out_channels)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         
         x = self.encoder(x)
-        # x = self.norm(x)
-        x = self.ffn(x)
         return x
